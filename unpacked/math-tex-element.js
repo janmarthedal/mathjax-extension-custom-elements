@@ -1,5 +1,21 @@
 (function() {
 
+    var localQueue = [];
+
+    function enqueueTypeset(el) {
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, el]);
+    }
+
+    if (!MathJax.isReady) {
+        var waitFor = MathJax.Hub.config.skipStartupTypeset ? "End" : "Begin Typeset";
+        MathJax.Hub.Register.StartupHook(waitFor,
+            function () {
+                localQueue.forEach(enqueueTypeset);
+                localQueue = [];
+            }
+        );
+    }
+
     var MathTexProto = Object.create(HTMLElement.prototype);
 
     MathTexProto.attachedCallback = function () {
@@ -11,11 +27,11 @@
         }
         jaxelem.innerHTML = this.textContent;
         shadow.appendChild(jaxelem);
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, jaxelem]);
+        MathJax.isReady ? enqueueTypeset(jaxelem) : localQueue.push(jaxelem);
     };
 
     document.registerElement('math-tex', {prototype: MathTexProto});
     
-    MathJax.Ajax.loadComplete("[Contrib]/polymer-element/unpacked/custom-elements.js");
+    MathJax.Ajax.loadComplete("[Contrib]/mathjax-extension-custom-elements/unpacked/math-tex-element.js");
 
 }());
