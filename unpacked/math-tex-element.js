@@ -1,12 +1,12 @@
 (function() {
 
-    var localQueue = [];
+    var ready = MathJax.isReady, localQueue = [];
 
     function enqueueTypeset(el) {
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, el]);
     }
 
-    if (!MathJax.isReady) {
+    if (!ready) {
         var waitFor = MathJax.Hub.config.skipStartupTypeset ? "End" : "Begin Typeset";
         MathJax.Hub.Register.StartupHook(waitFor,
             function () {
@@ -27,11 +27,11 @@
         }
         jaxelem.innerHTML = this.textContent;
         shadow.appendChild(jaxelem);
-        MathJax.isReady ? enqueueTypeset(jaxelem) : localQueue.push(jaxelem);
+        ready ? enqueueTypeset(jaxelem) : localQueue.push(jaxelem);
     };
 
     document.registerElement('math-tex', {prototype: MathTexProto});
     
-    MathJax.Ajax.loadComplete("[Contrib]/mathjax-extension-custom-elements/unpacked/math-tex-element.js");
+    MathJax.Ajax.loadComplete("[Contrib]/unpacked/math-tex-element.js");
 
 }());
