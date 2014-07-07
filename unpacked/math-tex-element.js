@@ -12,6 +12,7 @@
             function () {
                 localQueue.forEach(enqueueTypeset);
                 localQueue = [];
+                ready = true;
             }
         );
     }

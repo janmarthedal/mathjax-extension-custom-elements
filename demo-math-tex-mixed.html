@@ -3,26 +3,28 @@
   <head>
     <title>math-tex demo (mixed)</title>
     <meta charset="utf-8">
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/polymer/0.3.3/platform.js"></script>
     <script type="text/x-mathjax-config">
         MathJax.Ajax.config.path["Contrib"] = "/mathjax-extension-custom-elements";
         MathJax.Hub.config.extensions.push("[Contrib]/unpacked/math-tex-element.js");
     </script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/polymer/0.3.3/platform.js"></script>
-    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/unpacked/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
   </head>
   <body>
-    <h1>math-tex demo (mixed)</h1>
+    <h1>&lt;math-tex&gt; demo (mixed)</h1>
 
     <p>TeX: \(\frac a b\)</p>
     <p>MathML: <math><msqrt><mi>x</mi></msqrt></math></p>
     <p>AsciiMath: `a^2 + b^2 = c^2`</p>
-    
+
     <p><code>&lt;math-tex&gt;</code>: <math-tex>c = \sqrt{a^2+b^2}</math-tex></p>
 
     <p><code>&lt;math-tex mode="display"&gt;</code>:</p>
 
     <math-tex mode="display" id="block">\sum_{k=1}^n k = \frac{n(n+1)}{2}</math-tex>
-    
+
+    <p>Back to <a href="index.html">demo list</a>.</p>
+
   </body>
 </html>
 

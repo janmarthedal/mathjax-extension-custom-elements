@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+  <head>
+    <title>math-tex demo (no preprocessing)</title>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/polymer/0.3.3/platform.js"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            skipStartupTypeset: true,
+            jax: ["input/TeX", "output/HTML-CSS"]
+        });
+        MathJax.Ajax.config.path["Contrib"] = "/mathjax-extension-custom-elements";
+        MathJax.Hub.config.extensions.push("[Contrib]/unpacked/math-tex-element.js");
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <h1>&lt;math-tex&gt; demo (no preprocessing)</h1>
+
+    <p>For <math-tex>n \in \mathbb N = 1, 2, 3, \ldots</math-tex> we have</p>
+
+    <math-tex mode="display">\sum_{k=1}^n k = \frac{n(n+1)}{2}</math-tex>
+
+    <p>The first two Fibonacci numbers are defined to be (<a href="#" onclick="more_fibs();">click for more</a>):</p>
+
+    <ul id="fib-list">
+      <li><math-tex>F_0 = 0</math-tex></li>
+      <li><math-tex>F_1 = 1</math-tex></li>
+    </ul>
+
+    <p>(No preprocessing, so TeX: \(\frac a b\), MathML: <math><msqrt><mi>x</mi></msqrt></math>, AsciiMath: `a^2 + b^2 = c^2` won't be typeset.)</p>
+
+    <p>Back to <a href="index.html">demo list</a>.</p>
+
+    <script type="text/javascript">
+      var more_fibs = (function () {
+        var idx=1, a=0, b=1;
+        return function () {
+          var li = document.createElement("li");
+          var t = a + b; a = b; b = t; idx++;
+          li.innerHTML = "<math-tex>F_{" + idx + "} = F_{" + (idx-1) + "} + F_{" + (idx-2) + "} = " + b + "</math-tex>";
+          document.getElementById("fib-list").appendChild(li);
+        }
+      })();
+    </script>
+
+  </body>
+</html>
+
