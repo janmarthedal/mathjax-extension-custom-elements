@@ -1,13 +1,13 @@
 mathjax-extension-custom-elements
 =================================
 
-MathJax extension that makes it possible to include math expressions using *Custom Elements*.
+MathJax extension that makes it possible to include math expressions using [Custom Elements](http://w3c.github.io/webcomponents/spec/custom/).
 
 See the [demos](http://janmarthedal.github.io/mathjax-extension-custom-elements/).
 
 ## General compatibility remarks
 
-This extension uses some upcoming browser capabilities, [Custom Elements](http://w3c.github.io/webcomponents/spec/custom/) and [Shadow DOM](http://w3c.github.io/webcomponents/spec/shadow/). To this end, the [Polymer Project](http://polymer-project.org) provides a [polyfill layer](http://www.polymer-project.org/docs/start/platform.html) which brings support to most [modern browsers](http://w3c.github.io/webcomponents/spec/shadow/).
+This extension uses some upcoming browser capabilities, Custom Elements and [Shadow DOM](http://w3c.github.io/webcomponents/spec/shadow/). To this end, the [Polymer Project](http://polymer-project.org) provides a [polyfill layer](http://www.polymer-project.org/docs/start/platform.html) which brings support to most [modern browsers](http://www.polymer-project.org/resources/compatibility.html).
 
 To load this compatibility library, place this on your page:
 
