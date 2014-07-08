@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+  <head>
+    <title>math-tex demo (no preprocessing)</title>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/polymer/0.3.3/platform.js"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            skipStartupTypeset: true,
+            jax: ["input/TeX", "output/HTML-CSS"]
+        });
+        MathJax.Ajax.config.path["Contrib"] = "/mathjax-extension-custom-elements";
+        MathJax.Hub.config.extensions.push("[Contrib]/unpacked/math-tex-element.js");
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <h1>&lt;math-tex&gt; demo (changing existing element)</h1>
+
+    <p><math-tex id="expr">F_1 = 1</math-tex></p>
+
+    <p><a href="#" onclick="more_fibs();">Next</a> (changes the <code>innerHTML</code> of the element above)</p>
+
+    <p><input type="checkbox" onchange="change();">Display style</input></p>
+
+    <p>Back to <a href="index.html">demo list</a>.</p>
+
+    <script type="text/javascript">
+      var more_fibs = (function () {
+        var idx=1, a=0, b=1;
+        return function () {
+          var t = a + b; a = b; b = t; idx++;
+          document.getElementById("expr").innerHTML = "F_{" + idx + "} = F_{" + (idx-1) + "} + F_{" + (idx-2) + "} = " + b;
+        }
+      })();
+      function change() {
+        var elem = document.getElementById("expr");
+        if (elem.hasAttribute("mode"))
+            elem.removeAttribute("mode");
+        else
+            elem.setAttribute("mode", "display");
+      }
+    </script>
+
+  </body>
+</html>
+
