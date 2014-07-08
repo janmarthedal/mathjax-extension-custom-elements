@@ -3,45 +3,34 @@
     var observeOptions = {attributes: true, childList: true, characterData: true, subtree: true};
     var ready = MathJax.isReady, localQueue = [];
 
-    var observer = new MutationObserver(function (mutations) {
-        mutations.forEach(function (mutation) {
-            var elem;
-            if (mutation.type === 'attributes')
-                elem = mutation.target;
-            else if (mutation.type === 'characterData')
-                elem = mutation.target.parentNode;
-            else if (mutation.type === 'childList' && mutation.addedNodes.length)
-                elem = mutation.addedNodes[0].parentNode;
-            if (elem && elem._jaxScript) {
-                updateShadowDOM(elem);
-                MathJax.Hub.Queue(["Reprocess", MathJax.Hub, elem._jaxScript]);
-            }
-        });
-    });
-
-    function updateShadowDOM(elem) {
-        elem._jaxScript.type = "math/tex";
+    function updateShadowDOM(elem, action) {
+        elem._jax.script.type = "math/tex";
         if (elem.getAttribute('mode') === 'display') {
-            elem._jaxScript.type += "; mode=display";
+            elem._jax.script.type += "; mode=display";
         }
-        elem._jaxScript.textContent = elem.textContent;
+        elem._jax.script.textContent = elem.textContent;
+        MathJax.Hub.Queue([action, MathJax.Hub, elem._jax.script]);
     }
 
     function enqueueTypeset(elem) {
-        updateShadowDOM(elem);
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, elem._jaxScript]);
+        // initiate first typeset
+        updateShadowDOM(elem, "Typeset");
+        // setup mutation observer to re-typeset when needed
+        var observer = new MutationObserver(function () {
+            updateShadowDOM(elem, "Reprocess");
+        });
         observer.observe(elem, observeOptions);
+        elem._jax.observer = observer;
     }
 
     if (!ready) {
         var waitFor = MathJax.Hub.config.skipStartupTypeset ? "End" : "Begin Typeset";
-        MathJax.Hub.Register.StartupHook(waitFor,
-            function () {
-                localQueue.forEach(enqueueTypeset);
-                localQueue = [];
-                ready = true;
-            }
-        );
+        function flushQueue() {
+            localQueue.forEach(enqueueTypeset);
+            localQueue = [];
+            ready = true;
+        }
+        MathJax.Hub.Register.StartupHook(waitFor, flushQueue);
     }
 
     var MathTexProto = Object.create(HTMLElement.prototype);
@@ -50,11 +39,18 @@
         var shadow = this.createShadowRoot();
         var script = document.createElement('script');
         shadow.appendChild(script);
-        this._jaxScript = script;
+        this._jax = {script: script};
     };
 
     MathTexProto.attachedCallback = function () {
         ready ? enqueueTypeset(this) : localQueue.push(this);
+    };
+
+    MathTexProto.detachedCallback = function () {
+        if (this._jax.observer) {
+            this._jax.observer.disconnect();
+            delete this._jax.observer;
+        }
     };
 
     document.registerElement('math-tex', {prototype: MathTexProto});
