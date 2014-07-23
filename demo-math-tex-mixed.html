@@ -3,8 +3,11 @@
   <head>
     <title>math-tex demo (mixed)</title>
     <meta charset="utf-8">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/polymer/0.3.3/platform.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/polymer/0.3.4/platform.js"></script>
     <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          elements: document.getElementsByTagName("body")
+        });
         MathJax.Ajax.config.path["Contrib"] = "/mathjax-extension-custom-elements";
         MathJax.Hub.config.extensions.push("[Contrib]/unpacked/math-tex-element.js");
     </script>
@@ -21,7 +24,7 @@
 
     <p><code>&lt;math-tex mode="display"&gt;</code>:</p>
 
-    <math-tex mode="display" id="block">\sum_{k=1}^n k = \frac{n(n+1)}{2}</math-tex>
+    <math-tex mode="display">\sum_{k=1}^n k = \frac{n(n+1)}{2}</math-tex>
 
     <p>Back to <a href="index.html">demo list</a>.</p>
 
