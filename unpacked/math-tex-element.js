@@ -56,4 +56,4 @@
     
     MathJax.Ajax.loadComplete('[Contrib]/unpacked/math-tex-element.js');
 
-}());
+})();
