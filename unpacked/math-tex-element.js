@@ -1,60 +1,59 @@
 (function() {
 
-    var observeOptions = {attributes: true, childList: true, characterData: true, subtree: true};
-    var ready = MathJax.isReady, localQueue = [];
+    var ready = MathJax.isReady, queue = [];
 
-    function updateShadowDOM(elem, action) {
-        elem._jax.script.type = "math/tex";
-        if (elem.getAttribute('mode') === 'display') {
-            elem._jax.script.type += "; mode=display";
-        }
-        elem._jax.script.textContent = elem.textContent;
-        MathJax.Hub.Queue([action, MathJax.Hub, elem._jax.script]);
+    function update(jax, mode, math) {
+        var action = jax.hasAttribute('type') ? 'Reprocess' : 'Typeset';
+        jax.type = mode === 'display' ? 'math/tex; mode=display' : 'math/tex';
+        if (math)
+            jax.textContent = math;
+        MathJax.Hub.Queue([action, MathJax.Hub, jax]);
     }
 
     function enqueueTypeset(elem) {
-        // initiate first typeset
-        updateShadowDOM(elem, "Typeset");
-        // setup mutation observer to re-typeset when needed
-        var observer = new MutationObserver(function () {
-            updateShadowDOM(elem, "Reprocess");
-        });
-        observer.observe(elem, observeOptions);
-        elem._jax.observer = observer;
+        update(elem._jax, elem.getAttribute('mode'), elem.textContent);
     }
 
     if (!ready) {
-        var waitFor = MathJax.Hub.config.skipStartupTypeset ? "End" : "Begin Typeset";
+        var waitFor = MathJax.Hub.config.skipStartupTypeset ? 'End' : 'Begin Typeset';
         function flushQueue() {
-            localQueue.forEach(enqueueTypeset);
-            localQueue = [];
+            queue.forEach(enqueueTypeset);
+            queue = [];
             ready = true;
         }
         MathJax.Hub.Register.StartupHook(waitFor, flushQueue);
     }
 
-    var MathTexProto = Object.create(HTMLElement.prototype);
+    var element = Object.create(HTMLElement.prototype);
 
-    MathTexProto.createdCallback = function () {
+    element.createdCallback = function () {
         var shadow = this.createShadowRoot();
         var script = document.createElement('script');
         shadow.appendChild(script);
-        this._jax = {script: script};
+        this._jax = script;
     };
 
-    MathTexProto.attachedCallback = function () {
-        ready ? enqueueTypeset(this) : localQueue.push(this);
+    element.attachedCallback = function () {
+        ready ? enqueueTypeset(this) : queue.push(this);
     };
 
-    MathTexProto.detachedCallback = function () {
-        if (this._jax.observer) {
-            this._jax.observer.disconnect();
-            delete this._jax.observer;
+    element.attributeChangedCallback = function (attr, oldVal, newVal) {
+        if (attr === 'mode')
+            update(this._jax, newVal);
+    };
+
+    Object.defineProperty(element, 'math', {
+        get: function () {
+            return this.textContent;
+        },
+        set: function (value) {
+            this.textContent = value;
+            update(this._jax, this.getAttribute('mode'), value);
         }
-    };
+    });
 
-    document.registerElement('math-tex', {prototype: MathTexProto});
+    document.registerElement('math-tex', {prototype: element});
     
-    MathJax.Ajax.loadComplete("[Contrib]/unpacked/math-tex-element.js");
+    MathJax.Ajax.loadComplete('[Contrib]/unpacked/math-tex-element.js');
 
 }());
